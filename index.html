@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuan tuan | 个咪网站</title>
+    <title>Tuan tuan | 长沙最帅布偶猫</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0a192f;
-            --secondary: #112240;
-            --accent: #64ffda;
-            --text: #ccd6f6;
-            --text-light: #8892b0;
+            --primary: #e3f2fd; /* 天蓝色背景 */
+            --secondary: #bbdefb; /* 浅天蓝色 */
+            --accent: #42a5f5; /* 亮蓝色 */
+            --accent-light: rgba(66, 165, 245, 0.2);
+            --text: #1565c0; /* 深蓝色文字 */
+            --text-light: #5d99c6; /* 中等蓝色 */
+            --card-bg: rgba(255, 255, 255, 0.9); /* 卡片背景 */
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         
         * {
@@ -24,9 +27,13 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--primary);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(187, 222, 251, 0.5) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(187, 222, 251, 0.5) 0%, transparent 30%);
             color: var(--text);
             line-height: 1.6;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         
         /* 导航栏 */
@@ -34,13 +41,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 10%;
+            padding: 1.5rem 8%;
             position: fixed;
             width: 100%;
             z-index: 1000;
-            background-color: rgba(10, 25, 47, 0.85);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+            box-shadow: 0 5px 30px rgba(21, 101, 192, 0.1);
+        }
+        
+        .navbar.scrolled {
+            padding: 1rem 8%;
+            box-shadow: 0 5px 30px rgba(21, 101, 192, 0.2);
         }
         
         .logo {
@@ -48,6 +61,19 @@
             font-weight: 700;
             color: var(--accent);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            font-size: 1.5rem;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 15px rgba(66, 165, 245, 0.4);
         }
         
         .nav-links {
@@ -56,7 +82,7 @@
         }
         
         .nav-links li {
-            margin: 0 1rem;
+            margin: 0 0.8rem;
         }
         
         .nav-links a {
@@ -64,100 +90,189 @@
             text-decoration: none;
             font-size: 1rem;
             font-weight: 500;
-            transition: color 0.3s;
-            padding: 0.5rem 0.8rem;
-            border-radius: 4px;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transform: translateX(-50%);
+            transition: var(--transition);
         }
         
         .nav-links a:hover {
             color: var(--accent);
         }
         
+        .nav-links a:hover::after {
+            width: 70%;
+        }
+        
         .nav-links a.active {
             color: var(--accent);
-            background-color: rgba(100, 255, 218, 0.1);
+            background-color: var(--accent-light);
         }
         
         .mobile-menu {
             display: none;
             font-size: 1.5rem;
             cursor: pointer;
+            color: var(--text);
+            z-index: 2000;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu:hover {
+            color: var(--accent);
         }
         
         /* Hero 区域 */
         .hero {
             height: 100vh;
+            min-height: 800px;
             display: flex;
             align-items: center;
-            padding: 0 10%;
+            padding: 0 8%;
             position: relative;
             overflow: hidden;
         }
         
+        .hero-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 4rem;
+        }
+        
         .hero-content {
-            max-width: 700px;
+            flex: 1;
+            max-width: 600px;
             z-index: 10;
+            animation: fadeInUp 1s ease-out;
         }
         
         .hero h4 {
             color: var(--accent);
             font-size: 1.2rem;
             font-weight: 400;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
+            letter-spacing: 2px;
         }
         
         .hero h1 {
-            font-size: 4rem;
-            font-weight: 700;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
             line-height: 1.1;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.5px;
+            color: var(--text);
         }
         
         .hero h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
             font-weight: 600;
             margin-bottom: 2rem;
             color: var(--text-light);
         }
         
         .hero p {
-            font-size: 1.1rem;
-            max-width: 600px;
+            font-size: clamp(1rem, 1.8vw, 1.1rem);
+            max-width: 550px;
             margin-bottom: 2.5rem;
             color: var(--text-light);
         }
         
+        .hero-btns {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: transparent;
             color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 0.8rem 2rem;
-            border-radius: 4px;
+            border: 2px solid var(--accent);
+            padding: 0.8rem 2.2rem;
+            border-radius: 30px;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            z-index: -1;
+            transition: var(--transition);
+        }
+        
+        .btn:hover::before {
+            width: 100%;
         }
         
         .btn:hover {
-            background-color: rgba(100, 255, 218, 0.1);
+            color: white;
             transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(66, 165, 245, 0.3);
         }
         
         .btn-filled {
             background-color: var(--accent);
-            color: var(--primary);
-            margin-right: 1rem;
+            color: white;
         }
         
         .btn-filled:hover {
-            background-color: rgba(100, 255, 218, 0.8);
+            background-color: rgba(66, 165, 245, 0.9);
+        }
+        
+        .hero-video {
+            flex: 1;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(21, 101, 192, 0.2);
+            position: relative;
+            z-index: 5;
+            transition: var(--transition);
+            transform: perspective(1000px) rotateY(-5deg);
+        }
+        
+        .hero-video video {
+            width: 100%;
+            display: block;
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+        
+        .hero-video:hover video {
+            transform: scale(1.03);
         }
         
         /* 关于我区域 */
         .section {
-            padding: 6rem 10%;
+            padding: 7rem 8%;
         }
         
         .section-title {
@@ -167,64 +282,107 @@
         }
         
         .section-title h2 {
-            font-size: 2rem;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
             font-weight: 700;
             color: var(--text);
             white-space: nowrap;
+            position: relative;
+            padding-right: 1.5rem;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px;
         }
         
         .section-title .line {
             height: 1px;
             width: 100%;
-            background-color: var(--text-light);
+            background: linear-gradient(to right, var(--accent), var(--text-light));
             margin-left: 2rem;
             opacity: 0.3;
         }
         
         .about-content {
             display: grid;
-            grid-template-columns: 3fr 2fr;
-            gap: 3rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .about-text {
+            padding-right: 2rem;
         }
         
         .about-text p {
             margin-bottom: 1.5rem;
             color: var(--text-light);
             line-height: 1.8;
+            font-size: clamp(1rem, 1.6vw, 1.05rem);
         }
         
         .skills {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 1.2rem;
+            margin-top: 2.5rem;
         }
         
         .skill-item {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-5px);
+            background: white;
+            box-shadow: 0 8px 20px rgba(21, 101, 192, 0.1);
         }
         
         .skill-item i {
             color: var(--accent);
             margin-right: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+        }
+        
+        .skill-item span {
+            color: var(--text);
         }
         
         .profile-img {
             position: relative;
             max-width: 100%;
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+            box-shadow: 0 15px 40px -15px rgba(21, 101, 192, 0.2);
+            transition: var(--transition);
+            height: auto;
+            max-height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 5px solid white;
         }
         
         .profile-img img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: cover;
             display: block;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            border-radius: 4px;
         }
         
         .profile-img::before {
@@ -235,9 +393,9 @@
             width: 100%;
             height: 100%;
             border: 2px solid var(--accent);
-            border-radius: 4px;
+            border-radius: 8px;
             z-index: -1;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
         
         .profile-img:hover::before {
@@ -246,36 +404,69 @@
         }
         
         .profile-img:hover img {
-            filter: brightness(1.1);
+            transform: scale(1.02);
         }
         
-        /* 作品集区域 */
+        /* 帅照集区域 */
         .portfolio {
             background-color: var(--secondary);
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            margin: 0 2rem;
+        }
+        
+        .portfolio::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(66, 165, 245, 0.2) 0%, transparent 70%);
+            z-index: 0;
         }
         
         .projects {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
+            gap: 2.5rem;
+            position: relative;
+            z-index: 10;
         }
         
         .project-card {
-            background-color: rgba(17, 34, 64, 0.7);
-            border-radius: 6px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px -5px rgba(2, 12, 27, 0.7);
+            transition: var(--transition);
+            box-shadow: 0 8px 25px -10px rgba(21, 101, 192, 0.2);
+            position: relative;
+            z-index: 5;
+            border: 1px solid rgba(66, 165, 245, 0.1);
         }
         
         .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px -10px rgba(100, 255, 218, 0.2);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px -15px rgba(66, 165, 245, 0.3);
+            border: 1px solid rgba(66, 165, 245, 0.3);
         }
         
         .project-img {
-            height: 200px;
+            height: 240px;
             overflow: hidden;
+            position: relative;
+        }
+        
+        .project-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, rgba(255, 255, 255, 0.8) 100%);
         }
         
         .project-img img {
@@ -286,11 +477,11 @@
         }
         
         .project-card:hover .project-img img {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
         
         .project-content {
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
         
         .project-title {
@@ -303,76 +494,90 @@
         .project-title h3 {
             font-size: 1.4rem;
             color: var(--text);
+            font-weight: 600;
         }
         
         .project-links a {
             color: var(--text);
             font-size: 1.2rem;
             margin-left: 1rem;
-            transition: color 0.3s;
+            transition: var(--transition);
         }
         
         .project-links a:hover {
             color: var(--accent);
+            transform: translateY(-3px);
         }
         
         .project-tags {
             display: flex;
             flex-wrap: wrap;
-            margin: 1rem 0;
+            margin: 1.2rem 0;
+            gap: 0.5rem;
         }
         
         .tag {
-            background-color: rgba(100, 255, 218, 0.1);
+            background-color: var(--accent-light);
             color: var(--accent);
             font-size: 0.8rem;
-            padding: 0.3rem 0.8rem;
+            padding: 0.3rem 0.9rem;
             border-radius: 20px;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+        
+        .tag:hover {
+            background-color: rgba(66, 165, 245, 0.25);
+            transform: translateY(-2px);
         }
         
         /* 联系区域 */
         .contact-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+            gap: 4rem;
         }
         
-        .contact-text {
-            margin-bottom: 2rem;
+        .contact-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: clamp(1rem, 1.6vw, 1.05rem);
         }
         
         .contact-form .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
+            position: relative;
         }
         
         .contact-form input,
         .contact-form textarea {
             width: 100%;
-            padding: 0.8rem 1rem;
-            background-color: transparent;
+            padding: 1rem 1.2rem;
+            background-color: rgba(255, 255, 255, 0.8);
             border: 1px solid var(--text-light);
-            border-radius: 4px;
+            border-radius: 8px;
             color: var(--text);
             font-family: inherit;
             font-size: 1rem;
+            transition: var(--transition);
         }
         
         .contact-form input:focus,
         .contact-form textarea:focus {
             outline: none;
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
         }
         
         .contact-form textarea {
-            min-height: 150px;
+            min-height: 160px;
             resize: vertical;
         }
         
         .social-links {
             display: flex;
             margin-top: 2rem;
+            gap: 1rem;
         }
         
         .social-links a {
@@ -384,90 +589,266 @@
             border-radius: 50%;
             border: 1px solid var(--text-light);
             color: var(--text);
-            font-size: 1.5rem;
-            margin-right: 1rem;
-            transition: all 0.3s ease;
+            font-size: 1.3rem;
+            transition: var(--transition);
+            background: white;
         }
         
         .social-links a:hover {
             border-color: var(--accent);
             color: var(--accent);
             transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(66, 165, 245, 0.2);
         }
         
         /* 页脚 */
         footer {
             background-color: var(--secondary);
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 2rem;
             color: var(--text-light);
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(66, 165, 245, 0.2);
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to top, var(--secondary), transparent);
+            z-index: 1;
         }
         
         .footer-content {
             max-width: 600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
         
         .footer-logo {
             color: var(--accent);
             font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .footer-logo i {
+            margin: 0 0.5rem;
+            animation: pulse 2s infinite;
+            color: #ff6b6b;
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
             list-style: none;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
+            flex-wrap: wrap;
         }
         
         .footer-links li {
-            margin: 0 1rem;
+            margin: 0.5rem 1.2rem;
         }
         
         .footer-links a {
             color: var(--text);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: var(--transition);
+            position: relative;
+            padding: 0.3rem 0;
+        }
+        
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: var(--transition);
         }
         
         .footer-links a:hover {
             color: var(--accent);
         }
         
-        /* 响应式设计 */
-        @media (max-width: 992px) {
-            .about-content,
-            .contact-content {
-                grid-template-columns: 1fr;
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            
-            .projects {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
         
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1.5rem 5%;
+        @keyframes float {
+            0% {
+                transform: perspective(1000px) rotateY(-5deg) translateY(0);
             }
-            
-            .section {
-                padding: 4rem 5%;
+            50% {
+                transform: perspective(1000px) rotateY(-5deg) translateY(-15px);
+            }
+            100% {
+                transform: perspective(1000px) rotateY(-5deg) translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* 云朵装饰 */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.8;
+        }
+        
+        .cloud-1 {
+            width: 120px;
+            height: 40px;
+            top: 15%;
+            left: 5%;
+            animation: float 12s infinite ease-in-out;
+        }
+        
+        .cloud-2 {
+            width: 80px;
+            height: 30px;
+            top: 25%;
+            right: 10%;
+            animation: float 15s infinite ease-in-out;
+            animation-delay: 2s;
+        }
+        
+        .cloud-3 {
+            width: 100px;
+            height: 35px;
+            bottom: 20%;
+            left: 15%;
+            animation: float 14s infinite ease-in-out;
+            animation-delay: 1s;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .navbar, .section {
+                padding-left: 5%;
+                padding-right: 5%;
             }
             
             .hero {
                 padding: 0 5%;
             }
             
+            .hero-container {
+                gap: 3rem;
+            }
+            
+            .about-content {
+                gap: 3rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .profile-img {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .projects {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .hero {
+                height: auto;
+                min-height: auto;
+                padding-top: 100px;
+                padding-bottom: 80px;
+            }
+            
+            .hero-container {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+                margin-bottom: 3rem;
+                padding-right: 0;
+                text-align: center;
+            }
+            
+            .hero-btns {
+                justify-content: center;
+            }
+            
+            .hero-video {
+                max-width: 80%;
+                margin: 0 auto;
+            }
+            
+            .about-text {
+                padding-right: 0;
+                text-align: center;
+            }
+            
+            .skills {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1.2rem 5%;
+            }
+            
+            .navbar.scrolled {
+                padding: 0.8rem 5%;
+            }
+            
+            .section {
+                padding: 5rem 5%;
+            }
+            
             .hero h1 {
-                font-size: 3rem;
+                font-size: 2.8rem;
             }
             
             .hero h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .nav-links {
@@ -475,12 +856,14 @@
                 top: 0;
                 right: -100%;
                 height: 100vh;
-                width: 70%;
-                background-color: var(--secondary);
+                width: 280px;
+                background-color: white;
                 flex-direction: column;
-                align-items: center;
-                padding: 8rem 0;
-                transition: all 0.5s ease;
+                align-items: flex-start;
+                padding: 100px 40px;
+                transition: var(--transition);
+                box-shadow: -5px 0 30px rgba(21, 101, 192, 0.1);
+                z-index: 1500;
             }
             
             .nav-links.active {
@@ -488,34 +871,84 @@
             }
             
             .nav-links li {
-                margin: 1.5rem 0;
+                margin: 1.2rem 0;
+                width: 100%;
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 0.8rem 1.5rem;
+                font-size: 1.1rem;
             }
             
             .mobile-menu {
                 display: block;
-                z-index: 2000;
+            }
+            
+            .projects {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-content {
+                gap: 2.5rem;
+            }
+            
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-title .line {
+                margin-left: 0;
+                margin-top: 1.5rem;
+                width: 100%;
+            }
+            
+            .hero-video {
+                max-width: 100%;
             }
         }
         
         @media (max-width: 576px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.3rem;
             }
             
             .hero h2 {
                 font-size: 1.5rem;
             }
             
-            .projects {
+            .skills {
                 grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+            }
+            
+            .footer-links li {
+                margin: 0.8rem 0;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 云朵装饰 -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    
     <!-- 导航栏 -->
     <nav class="navbar">
-        <a href="#" class="logo">团团</a>
+        <a href="#" class="logo"><i class="fas fa-paw"></i>团团</a>
         <ul class="nav-links">
             <li><a href="#home" class="active">首页</a></li>
             <li><a href="#about">关于咪</a></li>
@@ -528,25 +961,27 @@
     </nav>
 
     <!-- Hero 区域 -->
-<section class="hero" id="home" style="display: flex; align-items: center; justify-content: space-between; padding: 0 10%;">
-    <!-- 左侧内容 -->
-    <div class="hero-content" style="flex: 1; padding-right: 2rem;">
-        <h4>你好，我是</h4>
-        <h1>Tuan tuan</h1>
-        <h2>布偶猫 & Ragdoll Cat</h2>
-        <p>我今年不到一岁，是一只小公猫（已绝育，但不妨碍我喜欢小母猫），我爱吃罐罐，长沙最帅咪，如果你喜欢我，请找我妈要我联系方式！</p>
-        <div class="hero-btns">
-            <a href="#portfolio" class="btn btn-filled">查看帅照</a>
-            <a href="#contact" class="btn">联系我</a>
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h4>你好，我是</h4>
+                <h1>Tuan tuan</h1>
+                <h2>布偶猫 & Ragdoll Cat</h2>
+                <p>团团我呀，两岁半了，是一只小公猫（已绝育，但不妨碍我喜欢小母猫），我爱吃罐罐，长沙最帅咪，如果你喜欢我，请找我妈要我联系方式！</p>
+                <div class="hero-btns">
+                    <a href="#portfolio" class="btn btn-filled">查看帅照</a>
+                    <a href="#contact" class="btn">联系我</a>
+                </div>
+            </div>
+
+            <div class="hero-video">
+                <video autoplay muted loop playsinline>
+                    <source src="cat.mp4" type="video/mp4">
+                    您的浏览器不支持视频标签。
+                </video>
+            </div>
         </div>
-    </div>
-
-    <!-- 右侧视频 -->
-    <div class="hero-video" style="flex: 1; max-width: 500px;">
-        <video src="cat.mp4" autoplay muted loop style="width: 100%; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);"></video>
-    </div>
-</section>
-
+    </section>
 
     <!-- 关于我区域 -->
     <section class="section" id="about">
@@ -556,33 +991,39 @@
         </div>
         <div class="about-content">
             <div class="about-text">
-                <p>喵呜～大家好，我是一只拥有梦幻蓝眼和软糯脸蛋的小猫咪🎀你可以叫我“帅团团”，因为我最拿手的事就是——✨躺在柔软的被窝里，用眼神征服全世界！</p>
-                <p>我有一身奶白色的绒毛，像棉花糖一样松软，耳朵上有一抹优雅的灰色，是我的“天然发饰”。平时我喜欢静静地躺着观察你，一副“高贵冷艳但心里在偷笑”的表情，是我标志性的招牌脸！</p>
+                <p>喵呜～大家好，我是一只拥有梦幻蓝眼和软糯脸蛋的小猫咪🎀你可以叫我"帅团团"，因为我最拿手的事就是——✨躺在柔软的被窝里，用眼神征服全世界！</p>
+                <p>我有一身奶白色的绒毛，像棉花糖一样松软，耳朵上有一抹优雅的灰色，是我的"天然发饰"。平时我喜欢静静地躺着观察你，一副"高贵冷艳但心里在偷笑"的表情，是我标志性的招牌脸！</p>
                 <p>别看我一脸淡定，其实我超爱被夸～只要你说我可爱，我立刻就能给你一个傲娇又满意的小眼神👀💕</p>
                 <div class="skills">
                     <div class="skill-item">
-
+                        <i class="fas fa-heart"></i>
+                        <span>最爱罐罐</span>
                     </div>
                     <div class="skill-item">
-
+                        <i class="fas fa-bed"></i>
+                        <span>睡觉专家</span>
                     </div>
                     <div class="skill-item">
-
+                        <i class="fas fa-camera"></i>
+                        <span>镜头感强</span>
                     </div>
                     <div class="skill-item">
-
+                        <i class="fas fa-star"></i>
+                        <span>颜值担当</span>
                     </div>
                     <div class="skill-item">
-
+                        <i class="fas fa-paw"></i>
+                        <span>温柔性格</span>
                     </div>
                     <div class="skill-item">
-
+                        <i class="fas fa-sun"></i>
+                        <span>阳光男孩</span>
                     </div>
                 </div>
             </div>
-<div class="profile-img">
-    <img src="tuan.jpg" alt="帅团团">
-</div>
+            <div class="profile-img">
+                <img src="tuan.jpg" alt="帅团团">
+            </div>
         </div>
     </section>
 
@@ -595,14 +1036,14 @@
         <div class="projects">
             <div class="project-card">
                 <div class="project-img">
-    <img src="s1.jpg" alt="项目1">
-</div>
+                    <img src="s1.jpg" alt="团咪帅照">
+                </div>
                 <div class="project-content">
                     <div class="project-title">
                         <h3>团咪帅照</h3>
                         <div class="project-links">
-                            <a href="#"><i class="fab fa-github"></i></a>
-                            <a href="#"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fas fa-heart"></i></a>
                         </div>
                     </div>
                     <p>本咪霸气照，你爱了吗？</p>
@@ -617,14 +1058,14 @@
             
             <div class="project-card">
                 <div class="project-img">
-                    <img src="s2.jpg" alt="项目2">
+                    <img src="s2.jpg" alt="团咪床照">
                 </div>
                 <div class="project-content">
                     <div class="project-title">
                         <h3>团咪床照</h3>
                         <div class="project-links">
-                            <a href="#"><i class="fab fa-github"></i></a>
-                            <a href="#"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fas fa-heart"></i></a>
                         </div>
                     </div>
                     <p>本咪为数不多的床照，只给真爱粉看！</p>
@@ -639,14 +1080,14 @@
             
             <div class="project-card">
                 <div class="project-img">
-                    <img src= "s3.jpg"alt="项目3">
+                    <img src="s3.jpg" alt="团咪困照">
                 </div>
                 <div class="project-content">
                     <div class="project-title">
                         <h3>团咪困照</h3>
                         <div class="project-links">
-                            <a href="#"><i class="fab fa-github"></i></a>
-                            <a href="#"><i class="fas fa-external-link-alt"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fas fa-heart"></i></a>
                         </div>
                     </div>
                     <p>我只是困了，不是眼睛小！</p>
@@ -672,10 +1113,10 @@
                 <p>如果你对我感兴趣，被我帅气所折服，请联系我妈！</p>
                 <p>我会尽快回复您的消息，期待与您（最好是小母猫）交流！</p>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
             <div class="contact-form">
@@ -701,7 +1142,7 @@
     <!-- 页脚 -->
     <footer>
         <div class="footer-content">
-            <div class="footer-logo">团 ❤️ 团</div>
+            <div class="footer-logo">团 <i class="fas fa-heart"></i> 团</div>
             <p>温柔，可爱，帅气，爱妈妈的团咪</p>
             <ul class="footer-links">
                 <li><a href="#home">首页</a></li>
@@ -709,7 +1150,7 @@
                 <li><a href="#portfolio">帅照集</a></li>
                 <li><a href="#contact">联系咪</a></li>
             </ul>
-            <p>&copy; 2025 Tuantuan. 保留所有权利</p>
+            <p>&copy; 2025 团团. 保留所有权利 | 长沙最帅布偶猫</p>
         </div>
     </footer>
 
@@ -718,11 +1159,9 @@
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 50) {
-                navbar.style.padding = '1rem 10%';
-                navbar.style.boxShadow = '0 5px 20px rgba(2, 12, 27, 0.7)';
+                navbar.classList.add('scrolled');
             } else {
-                navbar.style.padding = '1.5rem 10%';
-                navbar.style.boxShadow = 'none';
+                navbar.classList.remove('scrolled');
             }
         });
         
@@ -776,6 +1215,11 @@
                     item.classList.add('active');
                 }
             });
+        });
+        
+        // 初始化页面加载效果
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
         });
     </script>
 </body>
