@@ -40,6 +40,51 @@
             scroll-behavior: smooth;
         }
         
+        /* 加载指示器 */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 133, 162, 0.2);
+            border-top: 8px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loader-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+        
+        .loader-text:after {
+            content: "🐾";
+            margin-left: 10px;
+            animation: bounce 1.5s infinite;
+        }
+        
         /* 导航栏 */
         .navbar {
             display: flex;
@@ -54,6 +99,11 @@
             transition: var(--transition);
             box-shadow: 0 5px 20px rgba(42, 67, 101, 0.05);
             border-radius: 0 0 25px 25px;
+            top: -100px;
+        }
+        
+        .navbar.visible {
+            top: 0;
         }
         
         .navbar.scrolled {
@@ -382,9 +432,27 @@
         
         .hero-video video {
             width: 100%;
+            height: 100%;
             display: block;
             transition: var(--transition);
             border-radius: 18px;
+            object-fit: cover;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #bbdefb, #e3f2fd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+        }
+        
+        .video-placeholder i {
+            font-size: 5rem;
+            color: var(--accent);
+            animation: pulse 2s infinite;
         }
         
         .hero-video:hover {
@@ -542,6 +610,7 @@
             align-items: center;
             border: 10px solid white;
             transform: rotate(-3deg);
+            background: linear-gradient(45deg, #bbdefb, #e3f2fd);
         }
         
         .profile-img:before {
@@ -621,6 +690,7 @@
             height: 280px;
             overflow: hidden;
             position: relative;
+            background: linear-gradient(45deg, #bbdefb, #e3f2fd);
         }
         
         .project-img:after {
@@ -929,7 +999,12 @@
             }
         }
         
-        /* 响应式设计 */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 - 针对移动端优化 */
         @media (max-width: 1200px) {
             .navbar, .section {
                 padding-left: 5%;
@@ -1081,6 +1156,18 @@
             .hero-video {
                 max-width: 100%;
             }
+            
+            /* 移动端图片优化 */
+            .profile-img, .project-img {
+                background-size: cover;
+                background-position: center;
+            }
+            
+            /* 移动端视频优化 */
+            .hero-video video {
+                width: 100%;
+                height: auto;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1120,10 +1207,35 @@
             .footer-links a {
                 justify-content: center;
             }
+            
+            /* 移动端小屏幕优化 */
+            .hero p, .about-text p, .contact-text p {
+                padding: 1.5rem;
+            }
+            
+            .project-content {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* 针对慢速网络优化 */
+        .lazy-load {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .lazy-load.loaded {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
+    <!-- 加载指示器 -->
+    <div class="loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">加载团团中...</div>
+    </div>
+    
     <!-- 爪印装饰 -->
     <div class="paw-print" style="width: 50px; height: 50px; top: 15%; left: 10%; animation-delay: 0s;"></div>
     <div class="paw-print" style="width: 40px; height: 40px; top: 25%; right: 12%; animation-delay: 2s;"></div>
@@ -1162,6 +1274,12 @@
             <div class="hero-video">
                 <video autoplay muted loop playsinline>
                     <source src="cat.mp4" type="video/mp4">
+                    <!-- 备选视频源 -->
+                    <source src="cat.webm" type="video/webm">
+                    <!-- 视频加载前的占位符 -->
+                    <div class="video-placeholder">
+                        <i class="fas fa-cat"></i>
+                    </div>
                     您的浏览器不支持视频标签。
                 </video>
             </div>
@@ -1207,7 +1325,8 @@
                 </div>
             </div>
             <div class="profile-img">
-                <img src="tuan.jpg" alt="帅团团">
+                <!-- 图片懒加载 -->
+                <img src="tuan.jpg" alt="帅团团" loading="lazy" class="lazy-load">
             </div>
         </div>
     </section>
@@ -1221,7 +1340,8 @@
         <div class="projects">
             <div class="project-card">
                 <div class="project-img">
-                    <img src="s1.jpg" alt="团咪帅照">
+                    <!-- 图片懒加载 -->
+                    <img src="s1.jpg" alt="团咪帅照" loading="lazy" class="lazy-load">
                 </div>
                 <div class="project-content">
                     <div class="project-title">
@@ -1243,7 +1363,7 @@
             
             <div class="project-card">
                 <div class="project-img">
-                    <img src="s2.jpg" alt="团咪床照">
+                    <img src="s2.jpg" alt="团咪床照" loading="lazy" class="lazy-load">
                 </div>
                 <div class="project-content">
                     <div class="project-title">
@@ -1265,7 +1385,7 @@
             
             <div class="project-card">
                 <div class="project-img">
-                    <img src="s3.jpg" alt="团咪困照">
+                    <img src="s3.jpg" alt="团咪困照" loading="lazy" class="lazy-load">
                 </div>
                 <div class="project-content">
                     <div class="project-title">
@@ -1340,6 +1460,100 @@
     </footer>
 
     <script>
+        // 页面加载处理
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('pageLoader');
+            const navbar = document.querySelector('.navbar');
+            
+            // 显示加载指示器
+            loader.classList.remove('hidden');
+            
+            // 模拟内容加载（实际项目中应替换为实际加载逻辑）
+            setTimeout(function() {
+                // 隐藏加载指示器
+                loader.classList.add('hidden');
+                
+                // 显示导航栏
+                navbar.classList.add('visible');
+                
+                // 图片懒加载处理
+                initLazyLoad();
+            }, 2000);
+            
+            // 视频加载处理
+            initVideoLoading();
+        });
+        
+        // 图片懒加载
+        function initLazyLoad() {
+            const lazyImages = document.querySelectorAll('.lazy-load');
+            
+            const lazyLoad = function() {
+                lazyImages.forEach(img => {
+                    if (img.getBoundingClientRect().top <= window.innerHeight && 
+                        img.getBoundingClientRect().bottom >= 0 &&
+                        getComputedStyle(img).display !== "none") {
+                        
+                        // 模拟加载延迟
+                        setTimeout(() => {
+                            img.classList.add('loaded');
+                        }, 300);
+                    }
+                });
+            };
+            
+            // 初始加载可视区域图片
+            lazyLoad();
+            
+            // 滚动时加载图片
+            window.addEventListener('scroll', lazyLoad);
+            window.addEventListener('resize', lazyLoad);
+            window.addEventListener('orientationchange', lazyLoad);
+        }
+        
+        // 视频加载优化
+        function initVideoLoading() {
+            const video = document.querySelector('video');
+            
+            if (!video) return;
+            
+            // 显示视频加载占位符
+            const placeholder = document.querySelector('.video-placeholder');
+            
+            // 检查视频是否可播放
+            video.addEventListener('loadeddata', function() {
+                // 视频加载完成后隐藏占位符
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+            });
+            
+            // 处理视频加载错误
+            video.addEventListener('error', function() {
+                // 显示错误信息
+                if (placeholder) {
+                    placeholder.innerHTML = '<p>视频加载失败，请检查网络连接</p>';
+                }
+            });
+            
+            // 移动端特殊处理
+            if (/Mobi|Android/i.test(navigator.userAgent)) {
+                // 添加点击播放控制
+                video.removeAttribute('autoplay');
+                video.controls = true;
+                
+                // 添加播放按钮
+                if (placeholder) {
+                    placeholder.innerHTML = '<i class="fas fa-play-circle"></i><p>点击播放视频</p>';
+                    placeholder.style.cursor = 'pointer';
+                    placeholder.addEventListener('click', function() {
+                        video.play();
+                        placeholder.style.display = 'none';
+                    });
+                }
+            }
+        }
+        
         // 导航栏滚动效果
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
@@ -1420,8 +1634,6 @@
         
         // 初始化页面加载效果
         window.addEventListener('load', function() {
-            document.body.classList.add('loaded');
-            
             // 添加更多浮动爪印
             for (let i = 0; i < 15; i++) {
                 createFloatingPaw();
