@@ -1155,6 +1155,7 @@
             
             .hero-video {
                 max-width: 100%;
+                height: 300px; /* 固定高度确保移动端布局稳定 */
             }
             
             /* 移动端图片优化 */
@@ -1173,7 +1174,6 @@
             /* 移动端视频容器优化 */
             .hero-video {
                 max-width: 95%;
-                height: 300px;
             }
             
             /* 移动端图片加载提示 */
@@ -1344,8 +1344,7 @@
                 </div>
                 
                 <video autoplay muted loop playsinline id="catVideo">
-                    <!-- 添加多个视频源格式确保兼容性 -->
-                    <source src="cat.mp4" type="video/mp4">
+                    <!-- 只保留webm格式 -->
                     <source src="cat.webm" type="video/webm">
                     您的浏览器不支持视频标签。
                 </video>
@@ -1583,6 +1582,28 @@
             // 移动端优化：预加载元数据
             video.preload = 'metadata';
             
+            // 检测移动设备
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            
+            // 移动设备不自动播放，改为显示播放按钮
+            if (isMobile) {
+                video.autoplay = false;
+                video.controls = true; // 显示原生控制条
+                videoLoading.innerHTML = `
+                    <i class="fas fa-play-circle"></i>
+                    <p>点击播放团团视频</p>
+                `;
+                videoLoading.style.display = 'flex';
+                
+                videoLoading.addEventListener('click', function() {
+                    video.play();
+                    videoLoading.style.display = 'none';
+                });
+            } else {
+                // 桌面设备保持自动播放
+                video.autoplay = true;
+            }
+            
             // 显示视频加载状态
             function showLoadingState() {
                 if (placeholder) {
@@ -1598,7 +1619,10 @@
                 }
                 video.style.display = 'block';
                 try {
-                    video.play();
+                    // 移动设备不自动播放，已处理
+                    if (!isMobile) {
+                        video.play();
+                    }
                 } catch (e) {
                     console.log('自动播放失败:', e);
                     // 显示播放按钮
@@ -1639,7 +1663,6 @@
                 
                 // 添加多个格式的源
                 const sources = [
-                    {src: 'cat.mp4', type: 'video/mp4'},
                     {src: 'cat.webm', type: 'video/webm'}
                 ];
                 
@@ -1658,14 +1681,16 @@
                 video.addEventListener('canplay', showVideo);
                 video.addEventListener('error', showErrorState);
                 
-                // 尝试播放
-                const playPromise = video.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log('播放失败:', error);
-                        showErrorState();
-                    });
+                // 尝试播放（仅限非移动设备）
+                if (!isMobile) {
+                    const playPromise = video.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log('播放失败:', error);
+                            showErrorState();
+                        });
+                    }
                 }
             }
             
