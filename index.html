@@ -1168,6 +1168,63 @@
                 width: 100%;
                 height: auto;
             }
+            
+            /* 新增移动端优化样式 */
+            /* 移动端视频容器优化 */
+            .hero-video {
+                max-width: 95%;
+                height: 300px;
+            }
+            
+            /* 移动端图片加载提示 */
+            .media-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-light);
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .media-loading i {
+                font-size: 3rem;
+                margin-bottom: 15px;
+                color: var(--accent);
+                animation: pulse 2s infinite;
+            }
+            
+            /* 视频重试按钮 */
+            .retry-btn {
+                margin-top: 15px;
+                padding: 8px 20px;
+                background: var(--accent);
+                color: white;
+                border-radius: 20px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: var(--transition);
+            }
+            
+            .retry-btn:hover {
+                background: var(--accent-yellow);
+                transform: scale(1.05);
+            }
+            
+            /* 图片加载状态 */
+            .image-loading {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.8);
+                z-index: 2;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1215,6 +1272,11 @@
             
             .project-content {
                 padding: 1.5rem;
+            }
+            
+            /* 移动端视频高度调整 */
+            .hero-video {
+                height: 250px;
             }
         }
         
@@ -1272,14 +1334,19 @@
             </div>
 
             <div class="hero-video">
-                <video autoplay muted loop playsinline>
-                    <source src="cat.mp4" type="video/mp4">
-                    <!-- 备选视频源 -->
-                    <source src="cat.webm" type="video/webm">
-                    <!-- 视频加载前的占位符 -->
-                    <div class="video-placeholder">
+                <!-- 增强的视频加载提示 -->
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <div class="media-loading" id="videoLoading">
                         <i class="fas fa-cat"></i>
+                        <p>正在加载团团的可爱视频...</p>
+                        <p class="retry-btn" id="retryVideo">点我重试</p>
                     </div>
+                </div>
+                
+                <video autoplay muted loop playsinline id="catVideo">
+                    <!-- 添加多个视频源格式确保兼容性 -->
+                    <source src="cat.mp4" type="video/mp4">
+                    <source src="cat.webm" type="video/webm">
                     您的浏览器不支持视频标签。
                 </video>
             </div>
@@ -1325,8 +1392,13 @@
                 </div>
             </div>
             <div class="profile-img">
+                <!-- 图片加载状态 -->
+                <div class="image-loading" id="profileImgLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>加载帅照中...</p>
+                </div>
                 <!-- 图片懒加载 -->
-                <img src="tuan.jpg" alt="帅团团" loading="lazy" class="lazy-load">
+                <img src="tuan.jpg" alt="帅团团" id="profileImg" class="lazy-load">
             </div>
         </div>
     </section>
@@ -1340,6 +1412,11 @@
         <div class="projects">
             <div class="project-card">
                 <div class="project-img">
+                    <!-- 图片加载状态 -->
+                    <div class="image-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>加载帅照中...</p>
+                    </div>
                     <!-- 图片懒加载 -->
                     <img src="s1.jpg" alt="团咪帅照" loading="lazy" class="lazy-load">
                 </div>
@@ -1363,6 +1440,11 @@
             
             <div class="project-card">
                 <div class="project-img">
+                    <!-- 图片加载状态 -->
+                    <div class="image-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>加载帅照中...</p>
+                    </div>
                     <img src="s2.jpg" alt="团咪床照" loading="lazy" class="lazy-load">
                 </div>
                 <div class="project-content">
@@ -1385,6 +1467,11 @@
             
             <div class="project-card">
                 <div class="project-img">
+                    <!-- 图片加载状态 -->
+                    <div class="image-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>加载帅照中...</p>
+                    </div>
                     <img src="s3.jpg" alt="团咪困照" loading="lazy" class="lazy-load">
                 </div>
                 <div class="project-content">
@@ -1468,7 +1555,7 @@
             // 显示加载指示器
             loader.classList.remove('hidden');
             
-            // 模拟内容加载（实际项目中应替换为实际加载逻辑）
+            // 模拟内容加载
             setTimeout(function() {
                 // 隐藏加载指示器
                 loader.classList.add('hidden');
@@ -1478,79 +1565,194 @@
                 
                 // 图片懒加载处理
                 initLazyLoad();
+                
+                // 视频加载处理
+                initVideoLoading();
             }, 2000);
-            
-            // 视频加载处理
-            initVideoLoading();
         });
         
-        // 图片懒加载
-        function initLazyLoad() {
-            const lazyImages = document.querySelectorAll('.lazy-load');
-            
-            const lazyLoad = function() {
-                lazyImages.forEach(img => {
-                    if (img.getBoundingClientRect().top <= window.innerHeight && 
-                        img.getBoundingClientRect().bottom >= 0 &&
-                        getComputedStyle(img).display !== "none") {
-                        
-                        // 模拟加载延迟
-                        setTimeout(() => {
-                            img.classList.add('loaded');
-                        }, 300);
-                    }
-                });
-            };
-            
-            // 初始加载可视区域图片
-            lazyLoad();
-            
-            // 滚动时加载图片
-            window.addEventListener('scroll', lazyLoad);
-            window.addEventListener('resize', lazyLoad);
-            window.addEventListener('orientationchange', lazyLoad);
-        }
-        
-        // 视频加载优化
+        // 增强的视频加载函数
         function initVideoLoading() {
-            const video = document.querySelector('video');
+            const video = document.getElementById('catVideo');
+            const videoLoading = document.getElementById('videoLoading');
+            const retryBtn = document.getElementById('retryVideo');
+            const placeholder = document.getElementById('videoPlaceholder');
             
             if (!video) return;
             
-            // 显示视频加载占位符
-            const placeholder = document.querySelector('.video-placeholder');
+            // 移动端优化：预加载元数据
+            video.preload = 'metadata';
             
-            // 检查视频是否可播放
-            video.addEventListener('loadeddata', function() {
-                // 视频加载完成后隐藏占位符
+            // 显示视频加载状态
+            function showLoadingState() {
+                if (placeholder) {
+                    placeholder.style.display = 'flex';
+                    video.style.display = 'none';
+                }
+            }
+            
+            // 显示视频
+            function showVideo() {
                 if (placeholder) {
                     placeholder.style.display = 'none';
                 }
-            });
-            
-            // 处理视频加载错误
-            video.addEventListener('error', function() {
-                // 显示错误信息
-                if (placeholder) {
-                    placeholder.innerHTML = '<p>视频加载失败，请检查网络连接</p>';
-                }
-            });
-            
-            // 移动端特殊处理
-            if (/Mobi|Android/i.test(navigator.userAgent)) {
-                // 添加点击播放控制
-                video.removeAttribute('autoplay');
-                video.controls = true;
-                
-                // 添加播放按钮
-                if (placeholder) {
-                    placeholder.innerHTML = '<i class="fas fa-play-circle"></i><p>点击播放视频</p>';
-                    placeholder.style.cursor = 'pointer';
-                    placeholder.addEventListener('click', function() {
+                video.style.display = 'block';
+                try {
+                    video.play();
+                } catch (e) {
+                    console.log('自动播放失败:', e);
+                    // 显示播放按钮
+                    video.controls = true;
+                    videoLoading.innerHTML = `
+                        <i class="fas fa-play-circle"></i>
+                        <p>点击播放团团视频</p>
+                    `;
+                    videoLoading.style.display = 'flex';
+                    videoLoading.addEventListener('click', function() {
                         video.play();
-                        placeholder.style.display = 'none';
+                        videoLoading.style.display = 'none';
                     });
                 }
+            }
+            
+            // 显示错误状态
+            function showErrorState() {
+                if (videoLoading) {
+                    videoLoading.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>视频加载失败</p>
+                        <p>可能原因: 网络问题或格式不支持</p>
+                        <p class="retry-btn" id="retryVideo">点我重试</p>
+                    `;
+                    document.getElementById('retryVideo').addEventListener('click', loadVideo);
+                }
+            }
+            
+            // 加载视频
+            function loadVideo() {
+                showLoadingState();
+                
+                // 清除现有源并重新添加
+                while (video.firstChild) {
+                    video.removeChild(video.firstChild);
+                }
+                
+                // 添加多个格式的源
+                const sources = [
+                    {src: 'cat.mp4', type: 'video/mp4'},
+                    {src: 'cat.webm', type: 'video/webm'}
+                ];
+                
+                sources.forEach(source => {
+                    const sourceEl = document.createElement('source');
+                    sourceEl.src = source.src;
+                    sourceEl.type = source.type;
+                    video.appendChild(sourceEl);
+                });
+                
+                // 重新加载视频
+                video.load();
+                
+                // 添加事件监听器
+                video.addEventListener('loadeddata', showVideo);
+                video.addEventListener('canplay', showVideo);
+                video.addEventListener('error', showErrorState);
+                
+                // 尝试播放
+                const playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log('播放失败:', error);
+                        showErrorState();
+                    });
+                }
+            }
+            
+            // 初始加载视频
+            loadVideo();
+            
+            // 重试按钮事件
+            if (retryBtn) {
+                retryBtn.addEventListener('click', loadVideo);
+            }
+        }
+        
+        // 增强的图片懒加载
+        function initLazyLoad() {
+            const lazyImages = document.querySelectorAll('.lazy-load');
+            
+            lazyImages.forEach(img => {
+                // 添加加载错误处理
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23bbdefb"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="10" fill="%232a4365"%3E图片加载失败%3C/text%3E%3C/svg%3E';
+                    this.alt = '图片加载失败';
+                    
+                    // 隐藏加载动画
+                    const loadingElement = this.previousElementSibling;
+                    if (loadingElement && loadingElement.classList.contains('image-loading')) {
+                        loadingElement.style.display = 'none';
+                    }
+                };
+                
+                // 图片加载成功处理
+                img.onload = function() {
+                    this.classList.add('loaded');
+                    
+                    // 隐藏加载动画
+                    const loadingElement = this.previousElementSibling;
+                    if (loadingElement && loadingElement.classList.contains('image-loading')) {
+                        loadingElement.style.display = 'none';
+                    }
+                };
+                
+                // 立即触发加载检查
+                if (img.complete) {
+                    img.onload();
+                }
+            });
+            
+            // 使用Intersection Observer API（现代浏览器）
+            if ('IntersectionObserver' in window) {
+                const lazyImageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src || lazyImage.src;
+                            lazyImageObserver.unobserve(lazyImage);
+                        }
+                    });
+                });
+                
+                lazyImages.forEach(lazyImage => {
+                    // 保存原始src到data-src
+                    if (!lazyImage.dataset.src) {
+                        lazyImage.dataset.src = lazyImage.src;
+                        lazyImage.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Crect width="100" height="100" fill="%23bbdefb"/%3E%3C/svg%3E';
+                    }
+                    lazyImageObserver.observe(lazyImage);
+                });
+            } 
+            // 传统浏览器的回退方案
+            else {
+                const lazyLoad = function() {
+                    lazyImages.forEach(img => {
+                        if (img.getBoundingClientRect().top <= window.innerHeight && 
+                            img.getBoundingClientRect().bottom >= 0 &&
+                            getComputedStyle(img).display !== "none") {
+                            
+                            img.src = img.dataset.src || img.src;
+                        }
+                    });
+                };
+                
+                // 初始加载可视区域图片
+                lazyLoad();
+                
+                // 滚动时加载图片
+                window.addEventListener('scroll', lazyLoad);
+                window.addEventListener('resize', lazyLoad);
+                window.addEventListener('orientationchange', lazyLoad);
             }
         }
         
